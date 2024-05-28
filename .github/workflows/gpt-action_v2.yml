@@ -59,7 +59,7 @@ jobs:
           echo "$repository_context" | base64 --decode > repository_context.txt
           
           # Run your Python package, passing in the user input and repository context file path
-          python -m whl/adchackathon202405t1-0.0.1-py3-none-any.whl --user_input "$user_input" --underlying_repo repository_context.txt
+          python -m adchackathon202405t1-0.0.1-py3-none-any --user_input "$user_input" --underlying_repo repository_context.txt
   
 
       # - name: Create a new branch
