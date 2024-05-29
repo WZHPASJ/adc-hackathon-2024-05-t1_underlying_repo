@@ -63,7 +63,7 @@ jobs:
           
           echo "$repository_context" | base64 --decode > repository_context.txt
           
-          output=$(python -m adchackathon202405t1 --user_input "$user_input" --underlying_repo repository_context.txt)
+          output=$(python -m src --user_input "$user_input" --underlying_repo repository_context.txt)
           
           echo "::set-output name=process_output::$output"
 
