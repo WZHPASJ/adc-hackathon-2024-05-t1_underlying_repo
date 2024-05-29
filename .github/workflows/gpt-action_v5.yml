@@ -1,4 +1,4 @@
-name: GPT Processing v4
+name: GPT Processing v5
 
 on:
   workflow_dispatch:
@@ -77,10 +77,15 @@ jobs:
           
           echo "$output"  # Debugging: Output the result to check
           echo "::set-output name=process_output::$output"
+          echo "$output" > tests/test.py  # Ensure the output is written to the correct file
+  
 
       - name: Debugging - Check process output
         run: |
-          echo "${{ steps.process-output.outputs.process_output }}"
+          echo "Process Output: ${{ steps.process-output.outputs.process_output }}"
+          ls -l tests  # List the contents of the tests directory
+          cat tests/test.py  # Output the content of tests/test.py
+  
 
       - name: Create output directory and file
         run: |
