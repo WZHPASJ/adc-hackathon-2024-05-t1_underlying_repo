@@ -1,4 +1,4 @@
-name: GPT Processing v5
+name: GPT Processing v6
 
 on:
   workflow_dispatch:
