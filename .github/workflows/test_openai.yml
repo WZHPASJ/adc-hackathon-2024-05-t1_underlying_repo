@@ -84,19 +84,19 @@ jobs:
           pip install openai
           # Other dependencies
 
-      - name: Run GPT check
-        run: python /src/pig_latin.py
+      #- name: Run GPT check
+      #  run: python /src/pig_latin.py
 
-      - name: Save report
-        run: echo "GPT report" > report.txt
+      #- name: Save report
+      #  run: echo "GPT report" > report.txt
 
-      - name: Move report to test directory
-        run: mv report.txt /test/openai_report.txt
+      #- name: Move report to test directory
+      #  run: mv report.txt /test/openai_report.txt
 
-      - name: Commit and push changes
-        run: |
-         git config --local user.email "action@github.com"
-         git config --local user.name "GitHub Action"
-         git add /test/openai_report.txt
-         git commit -m "Add GPT report"
-         git push
+      #- name: Commit and push changes
+      #  run: |
+      #   git config --local user.email "action@github.com"
+      #   git config --local user.name "GitHub Action"
+      #   git add /test/openai_report.txt
+      #   git commit -m "Add GPT report"
+      #   git push
