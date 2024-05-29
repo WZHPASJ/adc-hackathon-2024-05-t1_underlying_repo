@@ -79,16 +79,14 @@ jobs:
           mkdir -p tests  # Ensure the directory exists
           echo "$output" > tests/test.py  # Ensure the output is written to the correct file
           
-          # Using Environment Files to set output
-          echo "process_output=$output" >> $GITHUB_ENV
+          # Using Environment Files to set output, escaping special characters
+          echo "process_output=$(echo "$output" | sed 's/%/%25/g; s/\n/%0A/g; s/\r/%0D/g')" >> $GITHUB_ENV
 
       - name: Debugging - Check process output
         run: |
-          echo "Process Output: ${{ steps.process-output.outputs.process_output }}"
+          echo "Process Output: ${{ env.process_output }}"
           ls -l tests  # List the contents of the tests directory
           cat tests/test.py  # Output the content of tests/test.py
-  
-  
 
       - name: Create output directory and file
         run: |
