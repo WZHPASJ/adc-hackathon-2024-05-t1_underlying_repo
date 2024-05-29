@@ -85,7 +85,7 @@ jobs:
           # Other dependencies
 
       - name: Run GPT check
-         run: python /src/pig_latin.py
+        run: python /src/pig_latin.py
 
       - name: Save report
         run: echo "GPT report" > report.txt
