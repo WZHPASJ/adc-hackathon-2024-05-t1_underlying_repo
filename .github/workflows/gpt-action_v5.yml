@@ -71,9 +71,9 @@ jobs:
           user_input="${{ github.event.inputs.user_input }}"
           repository_context="${{ steps.repo-content.outputs.repository_context }}"
           
-          echo "$repository_context" | base64 --decode > repository_context.txt
+          echo "$repository_context" | base64 --decode > tests/test.py
           
-          output=$(python -m src --user_input "$user_input" --underlying_repo repository_context.txt)
+          output=$(python -m src --user_input "$user_input" --underlying_repo tests/test.py)
           
           echo "::set-output name=process_output::$output"
   
