@@ -29,6 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NEW_BRANCH_NAME: GPT-branch
+      TMP_DIR: /tmp/newbranch_test
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
@@ -47,7 +48,7 @@ jobs:
 
       - name: Clone underlying repository
         run: |
-          git clone https://github.com/WZHPASJ/adc-hackathon-2024-05-t1_underlying_repo
+          git clone https://github.com/WZHPASJ/adc-hackathon-2024-05-t1_underlying_repo $TEMP_DIR
 
       - name: Extract repository content
         id: repo-content
@@ -95,10 +96,10 @@ jobs:
             # cd $TEMP_DIR
             git config --local user.email "action@github.com"
             git config --local user.name "GitHub Action"
-            git checkout -b ${{ env.NEW_BRANCH_NAME }}
+            git checkout -b newbranch_test
             git add -A
             git commit -m "new release"
-            git push --set-upstream origin ${{ env.NEW_BRANCH_NAME }}
+            git push --set-upstream origin newbranch_test
 
     #   - name: Commit files
     #     run: |
@@ -117,7 +118,7 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "Add GPT processed output"
-          branch: ${{ env.NEW_BRANCH_NAME }}
+          branch: newbranch_test
           base: ${{ github.event.inputs.target_branch }}
           title: "Add GPT processed output"
           body: "This PR adds the GPT processed output."
