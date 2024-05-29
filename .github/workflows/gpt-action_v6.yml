@@ -86,13 +86,13 @@ jobs:
         run: |
           echo "Process Output: ${{ env.process_output }}"
           ls -l tests  # List the contents of the tests directory
-          cat tests/test.py  # Output the content of tests/test.py
+          cat test.py  # Output the content of test.py
 
       - name: Create output directory and file
         run: |
           mkdir -p tests
-          echo "${{ steps.process-output.outputs.process_output }}" > tests/test.py
-          cat tests/test.py  # Debugging: Check the content of the created file
+          echo "${{ steps.process-output.outputs.process_output }}" > test.py
+          cat test.py  # Debugging: Check the content of the created file
 
       - name: Stash changes
         run: |
@@ -119,7 +119,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add tests/test.py
+          git add test.py
           git commit -m "Add GPT processed output" || echo "No changes to commit"
 
       - name: Push changes to feature branch
