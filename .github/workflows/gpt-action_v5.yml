@@ -78,7 +78,7 @@ jobs:
           echo "$output"  # Debugging: Output the result to check
           echo "::set-output name=process_output::$output"
 
-      - name: Debugging: Check process output
+      - name: Debugging - Check process output
         run: |
           echo "${{ steps.process-output.outputs.process_output }}"
 
