@@ -10,19 +10,13 @@ on:
       branch:
         description: 'Select the branch to run the workflow on'
         required: true
-        type: choice
-        options:
-          - main
-          - dev
-          # Add other branch names as needed
+        type: string
+        default: 'main'
       target_branch:
         description: 'Select the target branch for the pull request'
         required: true
-        type: choice
-        options:
-          - main
-          - dev
-          # Add other branch names as needed
+        type: string
+        default: 'main'
 
 jobs:
   process-with-gpt:
