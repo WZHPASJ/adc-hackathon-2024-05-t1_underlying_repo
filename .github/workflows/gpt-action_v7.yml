@@ -1,4 +1,4 @@
-name: GPT Processing v7
+name: GPT Processing v6
 
 on:
   workflow_dispatch:
@@ -28,8 +28,7 @@ jobs:
   process-with-gpt:
     runs-on: ubuntu-latest
     env:
-      NEW_BRANCH_NAME: ${{ github.event.inputs.branch }}-gptOutput
-      TMP_DIR: /tmp/${{ github.event.inputs.branch }}-gptOutput
+      NEW_BRANCH_NAME: GPT-branch
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
@@ -48,7 +47,7 @@ jobs:
 
       - name: Clone underlying repository
         run: |
-          git clone https://github.com/WZHPASJ/adc-hackathon-2024-05-t1_underlying_repo ${{ env.TMP_DIR }}
+          git clone https://github.com/WZHPASJ/adc-hackathon-2024-05-t1_underlying_repo
 
       - name: Extract repository content
         id: repo-content
@@ -91,14 +90,27 @@ jobs:
         run: |
           cat test.py  # Debugging: Check the content of the created file
 
-      - name: Commit files and push to new branch
+      - name: Create and push new branch
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git checkout -b ${{ env.NEW_BRANCH_NAME }}
-          git add test.py
-          git commit -m "Add GPT processed output"
-          git push --set-upstream origin ${{ env.NEW_BRANCH_NAME }}
+            # cd $TEMP_DIR
+            git config --local user.email "action@github.com"
+            git config --local user.name "GitHub Action"
+            git checkout -b ${{ env.NEW_BRANCH_NAME }}
+            git add -A
+            git commit -m "new release"
+            git push --set-upstream origin ${{ env.NEW_BRANCH_NAME }}
+
+    #   - name: Commit files
+    #     run: |
+    #       git config --local user.email "action@github.com"
+    #       git config --local user.name "GitHub Action"
+    #       git add .
+    #       git status
+    #       git commit -m "Add GPT processed output" || echo "No changes to commit"
+
+    #   - name: Push changes to feature branch
+    #     run: |
+    #       git push -u origin "GPT-branch"
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
@@ -109,6 +121,3 @@ jobs:
           base: ${{ github.event.inputs.target_branch }}
           title: "Add GPT processed output"
           body: "This PR adds the GPT processed output."
-
-      - name: Delete temporary directory
-        run: rm -rf ${{ env.TMP_DIR }}
