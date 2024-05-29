@@ -1,4 +1,4 @@
-name: GPT Processing v4
+name: GPT Processing v6
 
 on:
   workflow_dispatch:
@@ -71,16 +71,22 @@ jobs:
           user_input="${{ github.event.inputs.user_input }}"
           repository_context="${{ steps.repo-content.outputs.repository_context }}"
           
-          echo "$repository_context" | base64 --decode > repository_context.txt
+          echo "$repository_context" | base64 --decode > test.py
           
-          output=$(python -m src --user_input "$user_input" --underlying_repo repository_context.txt)
+          output=$(python -m src --user_input "$user_input" --underlying_repo test.py)
           
           echo "$output"  # Debugging: Output the result to check
-          echo "::set-output name=process_output::$output"
+          mkdir -p tests  # Ensure the directory exists
+          echo "$output" > tests/test.py  # Ensure the output is written to the correct file
+          
+          # Using Environment Files to set output, escaping special characters
+          echo "process_output=$(echo "$output" | jq -R | jq -s | jq -r @uri)" >> $GITHUB_ENV
 
-      - name: Debugging: Check process output
+      - name: Debugging - Check process output
         run: |
-          echo "${{ steps.process-output.outputs.process_output }}"
+          echo "Process Output: ${{ env.process_output }}"
+          ls -l tests  # List the contents of the tests directory
+          cat tests/test.py  # Output the content of tests/test.py
 
       - name: Create output directory and file
         run: |
@@ -101,10 +107,6 @@ jobs:
             git checkout -b $NEW_BRANCH_NAME
           fi
 
-      - name: Remove existing repository_context.txt
-        run: |
-          rm -f repository_context.txt
-
       - name: Apply stashed changes
         run: |
           git stash pop || true
@@ -120,7 +122,7 @@ jobs:
         run: |
           git push origin $NEW_BRANCH_NAME
 
-      - name: Create Pull Request
+      - name: Create or update Pull Request
         uses: peter-evans/create-pull-request@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
