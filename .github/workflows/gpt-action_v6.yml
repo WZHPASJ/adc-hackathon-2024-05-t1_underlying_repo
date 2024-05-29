@@ -111,7 +111,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add tests/test.py
+          git add test.py
           git commit -m "Add GPT processed output" || echo "No changes to commit"
 
       - name: Push changes to feature branch
