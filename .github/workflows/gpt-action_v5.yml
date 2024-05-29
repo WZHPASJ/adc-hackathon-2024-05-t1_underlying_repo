@@ -68,6 +68,7 @@ jobs:
       - name: Process with my-gpt package
         id: process-output
         run: |
+          mkdir -p tests
           user_input="${{ github.event.inputs.user_input }}"
           repository_context="${{ steps.repo-content.outputs.repository_context }}"
           
@@ -79,7 +80,6 @@ jobs:
   
       - name: Create output directory and file
         run: |
-          mkdir -p tests
           echo "${{ steps.process-output.outputs.process_output }}" > tests/test.py
   
       - name: Stash changes
