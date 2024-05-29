@@ -82,6 +82,10 @@ jobs:
           mkdir -p tests
           echo "${{ steps.process-output.outputs.process_output }}" > tests/test.py
   
+      - name: Stash changes
+        run: |
+          git stash --include-untracked
+  
       - name: Create or switch to output branch
         run: |
           git fetch origin
@@ -90,6 +94,10 @@ jobs:
           else
             git checkout -b $NEW_BRANCH_NAME
           fi
+  
+      - name: Apply stashed changes
+        run: |
+          git stash pop
   
       - name: Commit files
         run: |
