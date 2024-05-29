@@ -28,7 +28,7 @@ jobs:
   process-with-gpt:
     runs-on: ubuntu-latest
     env:
-      NEW_BRANCH_NAME: ${{ github.event.inputs.branch }}-gptOutput
+      NEW_BRANCH_NAME: GPT-branch
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
@@ -48,11 +48,7 @@ jobs:
       - name: Create or switch to output branch
         run: |
           git fetch origin
-          if git rev-parse --verify origin/$NEW_BRANCH_NAME; then
-            git checkout $NEW_BRANCH_NAME
-          else
-            git checkout -b $NEW_BRANCH_NAME
-          fi
+          git checkout -b "GPT-branch"
 
       - name: Extract repository content
         id: repo-content
@@ -105,7 +101,7 @@ jobs:
 
       - name: Push changes to feature branch
         run: |
-          git push -u origin $NEW_BRANCH_NAME
+          git push -u origin "GPT-branch"
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
