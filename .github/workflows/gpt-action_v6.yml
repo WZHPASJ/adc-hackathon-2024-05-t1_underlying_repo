@@ -1,4 +1,4 @@
-name: GPT Processing v6
+name: GPT Processing v5
 
 on:
   workflow_dispatch:
@@ -76,9 +76,23 @@ jobs:
           output=$(python -m src --user_input "$user_input" --underlying_repo test.py)
           
           echo "$output"  # Debugging: Output the result to check
+          mkdir -p tests  # Ensure the directory exists
+          echo "$output" > tests/test.py  # Ensure the output is written to the correct file
           
           # Using Environment Files to set output, escaping special characters
           echo "process_output=$(echo "$output" | jq -R | jq -s | jq -r @uri)" >> $GITHUB_ENV
+
+      - name: Debugging - Check process output
+        run: |
+          echo "Process Output: ${{ env.process_output }}"
+          ls -l tests  # List the contents of the tests directory
+          cat tests/test.py  # Output the content of tests/test.py
+
+      - name: Create output directory and file
+        run: |
+          mkdir -p tests
+          echo "${{ steps.process-output.outputs.process_output }}" > tests/test.py
+          cat tests/test.py  # Debugging: Check the content of the created file
 
       - name: Stash changes
         run: |
@@ -93,6 +107,10 @@ jobs:
             git checkout -b $NEW_BRANCH_NAME
           fi
 
+      - name: Remove existing test.py
+        run: |
+          rm -f test.py
+
       - name: Apply stashed changes
         run: |
           git stash pop || true
@@ -101,7 +119,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add .
+          git add tests/test.py
           git commit -m "Add GPT processed output" || echo "No changes to commit"
 
       - name: Push changes to feature branch
