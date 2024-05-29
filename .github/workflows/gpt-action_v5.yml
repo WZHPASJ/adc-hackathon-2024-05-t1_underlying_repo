@@ -34,17 +34,17 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: ${{ github.event.inputs.branch }}
-  
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
           python-version: '3.x'
-  
+
       - name: Install my-gpt package
         run: |
           python -m pip install --upgrade pip
           pip install whl/adchackathon202405t1-0.0.2-py3-none-any.whl
-  
+
       - name: Extract repository content
         id: repo-content
         run: |
@@ -64,28 +64,28 @@ jobs:
           
           repository_context=$(echo -n "$repository_context" | base64)
           echo "::set-output name=repository_context::$repository_context"
-  
+
       - name: Process with my-gpt package
         id: process-output
         run: |
-          mkdir -p tests
           user_input="${{ github.event.inputs.user_input }}"
           repository_context="${{ steps.repo-content.outputs.repository_context }}"
           
-          echo "$repository_context" | base64 --decode > tests/test.py
+          echo "$repository_context" | base64 --decode > repository_context.txt
           
-          output=$(python -m src --user_input "$user_input" --underlying_repo tests/test.py)
+          output=$(python -m src --user_input "$user_input" --underlying_repo repository_context.txt)
           
           echo "::set-output name=process_output::$output"
-  
+
       - name: Create output directory and file
         run: |
+          mkdir -p tests
           echo "${{ steps.process-output.outputs.process_output }}" > tests/test.py
-  
+
       - name: Stash changes
         run: |
           git stash --include-untracked
-  
+
       - name: Create or switch to output branch
         run: |
           git fetch origin
@@ -94,26 +94,26 @@ jobs:
           else
             git checkout -b $NEW_BRANCH_NAME
           fi
-  
+
       - name: Remove existing repository_context.txt
         run: |
           rm -f repository_context.txt
-  
+
       - name: Apply stashed changes
         run: |
-          git stash pop
-  
+          git stash pop || true
+
       - name: Commit files
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add tests/test.py
           git commit -m "Add GPT processed output" || echo "No changes to commit"
-  
+
       - name: Push changes to feature branch
         run: |
           git push origin $NEW_BRANCH_NAME
-  
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
         with:
