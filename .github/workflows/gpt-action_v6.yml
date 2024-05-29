@@ -76,8 +76,6 @@ jobs:
           output=$(python -m src --user_input "$user_input" --underlying_repo test.py)
           
           echo "$output"  # Debugging: Output the result to check
-
-          echo "$output" > test.py  # Ensure the output is written to the correct file
           
           # Using Environment Files to set output, escaping special characters
           echo "process_output=$(echo "$output" | jq -R | jq -s | jq -r @uri)" >> $GITHUB_ENV
