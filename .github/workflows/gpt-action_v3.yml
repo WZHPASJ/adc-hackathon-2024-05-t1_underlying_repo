@@ -1,4 +1,4 @@
-name: GPT Processing v2
+name: GPT Processing v3
 
 on:
   workflow_dispatch:
@@ -38,8 +38,6 @@ jobs:
       - name: Extract repository content
         id: repo-content
         run: |
-          # Find all text files and concatenate their content into a single string
-          # This example uses 'grep' to filter out binary files
           repository_files=$(find . -type f -not -path '*/\.*')
           repository_context=""
           for file in $repository_files; do
@@ -47,48 +45,47 @@ jobs:
               repository_context+=$(echo "
                 --- $file ---
                 $(cat "$file")")
-                            else
-                              repository_context+=$(echo "
+            else
+              repository_context+=$(echo "
                 --- $file ---
                 <BINARY_FILE>")
-                            fi
-                          done
+            fi
+          done
           
-          # Use GitHub Actions' output functionality to set the repository context
-          # Note: Output variables can only be single-line strings, so we base64 encode it
           repository_context=$(echo -n "$repository_context" | base64)
           echo "::set-output name=repository_context::$repository_context"
 
-
-      # After installing the package...
       - name: Process with my-gpt package
+        id: process-output
         run: |
           user_input="${{ github.event.inputs.user_input }}"
           repository_context="${{ steps.repo-content.outputs.repository_context }}"
           
-          # Decode the base64-encoded repository context
           echo "$repository_context" | base64 --decode > repository_context.txt
           
-          # Run your Python package, passing in the user input and repository context file path
-          python -m adchackathon202405t1 --user_input "$user_input" --underlying_repo repository_context.txt
-    
-  
+          output=$(python -m adchackathon202405t1 --user_input "$user_input" --underlying_repo repository_context.txt)
+          
+          echo "::set-output name=process_output::$output"
 
-      # - name: Create a new branch
-      #   run: |
-      #     ORIGINAL_BRANCH_NAME=$(echo ${{ github.ref }} | sed 's/refs/heads\///')
-      #     NEW_BRANCH_NAME="${ORIGINAL_BRANCH_NAME}-gptOutput"
-      #     git checkout -b $NEW_BRANCH_NAME
+      - name: Create output directory and file
+        run: |
+          mkdir -p tests
+          echo "${{ steps.process-output.outputs.process_output }}" > tests/test.py
 
-      # - name: Commit files
-      #   run: |
-      #     git config --local user.email "action@github.com"
-      #     git config --local user.name "GitHub Action"
-      #     git add .
-      #     git commit -m "Add GPT processed files"
+      - name: Create a new branch
+        run: |
+          NEW_BRANCH_NAME="${{ github.event.inputs.branch }}-gptOutput"
+          git checkout -b $NEW_BRANCH_NAME
 
-      # - name: Push changes
-      #   uses: ad-m/github-push-action@master
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     branch: ${{ env.NEW_BRANCH_NAME }}
+      - name: Commit files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add tests/test.py
+          git commit -m "Add GPT processed output"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.event.inputs.branch }}-gptOutput
