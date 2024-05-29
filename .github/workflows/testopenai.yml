@@ -1,4 +1,4 @@
-name: Install OpenAi Module
+name: Install OpenAI Module
 
 on:
   workflow_dispatch:
@@ -41,45 +41,6 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.x'
-
-      #- name: Install my-gpt package
-      #  run: |
-      #    python -m pip install --upgrade pip
-      #    pip install whl/adchackathon202405t1-0.0.2-py3-none-any.whl
-
-      #- name: Extract repository content
-      #  id: repo-content
-      #  run: |
-      #    repository_files=$(find . -type f -not -path '*/\.*')
-      #    repository_context=""
-      #    for file in $repository_files; do
-      #      if grep -qI '.*' "$file"; then  # If the file is a text file, add its content
-      #        repository_context+=$(echo "
-      #          --- $file ---
-      #          $(cat "$file")")
-      #      else
-      #        repository_context+=$(echo "
-      #          --- $file ---
-      #          <BINARY_FILE>")
-      #      fi
-      #    done
-      #    
-      #    repository_context=$(echo -n "$repository_context" | base64)
-      #    echo "::set-output name=repository_context::$repository_context"
-
-      #- name: Process with my-gpt package
-      #  id: process-output
-      #  run: |
-      #    user_input="${{ github.event.inputs.user_input }}"
-      #    repository_context="${{ steps.repo-content.outputs.repository_context }}"
-      #    mkdir -p tests  # Ensure the directory exists
-      #    touch tests/test.py  # Ensure the file exists
-      #    echo "$repository_context" | base64 --decode > tests/test.py
-      #    
-      #    output=$(python -m src --user_input "$user_input" --underlying_repo tests/test.py)
-      #    
-      #    echo "$output"  # Debugging: Output the result to check
-      #    echo "$output" > tests/test.py  # Ensure the output is written to the correct file
 
       - name: Install OpenAI dependencies
         run: |
