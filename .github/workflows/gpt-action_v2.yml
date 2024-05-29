@@ -1,4 +1,4 @@
-name: GPT Processing v5
+name: GPT Processing v4
 
 on:
   workflow_dispatch:
@@ -75,12 +75,18 @@ jobs:
           
           output=$(python -m src --user_input "$user_input" --underlying_repo repository_context.txt)
           
+          echo "$output"  # Debugging: Output the result to check
           echo "::set-output name=process_output::$output"
+
+      - name: Debugging: Check process output
+        run: |
+          echo "${{ steps.process-output.outputs.process_output }}"
 
       - name: Create output directory and file
         run: |
           mkdir -p tests
           echo "${{ steps.process-output.outputs.process_output }}" > tests/test.py
+          cat tests/test.py  # Debugging: Check the content of the created file
 
       - name: Stash changes
         run: |
