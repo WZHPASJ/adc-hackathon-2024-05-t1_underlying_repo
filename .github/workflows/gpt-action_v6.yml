@@ -73,7 +73,7 @@ jobs:
           
           echo "$repository_context" | base64 --decode > test.py
 
-          echo "$(python -m src --user_input "$user_input" --underlying_repo test.py)" > test2.py
+          #   echo "$(python -m src --user_input "$user_input" --underlying_repo test.py)" > test2.py
           
           # output=$(python -m src --user_input "$user_input" --underlying_repo test.py)
           
