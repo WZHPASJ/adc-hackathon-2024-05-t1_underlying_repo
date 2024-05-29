@@ -43,7 +43,7 @@ jobs:
       - name: Install my-gpt package
         run: |
           python -m pip install --upgrade pip
-          pip install whl/adchackathon202405t1-0.0.2-py3-none-any.whl
+          pip install --force-reinstall whl/adchackathon202405t1-0.0.3-py3-none-any.whl
 
       - name: Extract repository content
         id: repo-content
@@ -77,7 +77,7 @@ jobs:
           
           echo "$output"  # Debugging: Output the result to check
           mkdir -p tests  # Ensure the directory exists
-          echo "$output" > tests/test.py  # Ensure the output is written to the correct file
+          echo "$output" > test.py  # Ensure the output is written to the correct file
           
           # Using Environment Files to set output, escaping special characters
           echo "process_output=$(echo "$output" | jq -R | jq -s | jq -r @uri)" >> $GITHUB_ENV
