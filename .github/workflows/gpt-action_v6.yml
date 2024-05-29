@@ -29,6 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       NEW_BRANCH_NAME: GPT-branch
+      TMP_DIR: /tmp/newbranch_test
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
@@ -45,10 +46,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install --force-reinstall whl/adchackathon202405t1-0.0.3-py3-none-any.whl
 
-      - name: Create or switch to output branch
+      - name: Clone underlying repository
         run: |
-          git fetch origin
-          git checkout -b "GPT-branch"
+          git clone https://github.com/WZHPASJ/adc-hackathon-2024-05-t1_underlying_repo $TEMP_DIR
 
       - name: Extract repository content
         id: repo-content
@@ -91,17 +91,25 @@ jobs:
         run: |
           cat test.py  # Debugging: Check the content of the created file
 
-      - name: Commit files
+      - name: Create and push new branch
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add .
-          git status
-          git commit -m "Add GPT processed output" || echo "No changes to commit"
+            cd $TEMP_DIR
+            git checkout -b newbranch_test
+            git add -A
+            git commit -m "new release"
+            git push --set-upstream origin newbranch_test
 
-      - name: Push changes to feature branch
-        run: |
-          git push -u origin "GPT-branch"
+    #   - name: Commit files
+    #     run: |
+    #       git config --local user.email "action@github.com"
+    #       git config --local user.name "GitHub Action"
+    #       git add .
+    #       git status
+    #       git commit -m "Add GPT processed output" || echo "No changes to commit"
+
+    #   - name: Push changes to feature branch
+    #     run: |
+    #       git push -u origin "GPT-branch"
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
